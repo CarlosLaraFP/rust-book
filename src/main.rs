@@ -3,7 +3,7 @@
     scope of every program. This set is called the prelude.
  */
 use std::io;
-use anyhow::anyhow; // Only use anyhow! macro if no default implementation is already provided by the crate
+//use anyhow::anyhow; // Only use anyhow! macro if no default implementation is already provided by the crate
 /*
     The logic behind the anyhow crate is that it provides its own error type. This type has
     pretty-printing properties and can easily be converted from other errors, like std::io::Error.
@@ -16,14 +16,31 @@ use anyhow::anyhow; // Only use anyhow! macro if no default implementation is al
 use rand::Rng; // The Rng trait defines methods that random number generators implement
 use std::cmp::Ordering; // enum with the variants Less, Greater, and Equal. These are the three outcomes that are possible when you compare two values.
 
+const RANGE_UPPER_LIMIT: u32 = 100;
 
-fn main() -> anyhow::Result<()> {
+
+fn main() {
+    //guessing_game()?;
+
+    let x = 5;
+
+    let x = x + 1;
+
+    {
+        let x = x * 2;
+        println!("The value of x in the inner scope is: {x}");
+    }
+
+    println!("The value of x is: {x}");
+}
+
+fn guessing_game() -> io::Result<()> {
     println!("Guess the number!");
 
     // Q# style syntax for range where = indicates inclusive
     // the rand::thread_rng function that gives us the particular random number generator:
     // one that is local to the current thread of execution and is seeded by the operating system
-    let secret_number: u32 = rand::thread_rng().gen_range(1..=100);
+    let secret_number: u32 = rand::thread_rng().gen_range(1..=RANGE_UPPER_LIMIT);
 
     loop {
         println!("Please input your guess.");
