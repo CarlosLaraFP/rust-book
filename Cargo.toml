@@ -5,5 +5,17 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+# When we include an external dependency, Cargo fetches the latest versions of everything that dependency needs from
+# the registry, which is a copy of data from Crates.io. Crates.io is where people in the Rust ecosystem post their open source Rust projects for others to use.
+
+# After updating the registry, Cargo checks the [dependencies] section and downloads any crates listed that aren’t already downloaded.
+# In this case, although we only listed rand as a dependency, Cargo also grabbed other crates that rand depends on to work.
+# After downloading the crates, Rust compiles them and then compiles the project with the dependencies available.
+
+# run cargo update for non-breaking updates (third decimal increase), otherwise increase dependency version explicitly
+
 [dependencies]
 anyhow = "1.0" # Excellent crate for displaying useful and pretty errors to users
+rand = "0.8.5" # The rand crate is a library crate, which contains code that is intended to be used in other programs and can’t be executed on its own.
+
+# cargo doc --open

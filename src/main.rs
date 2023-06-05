@@ -3,21 +3,26 @@
     scope of every program. This set is called the prelude.
  */
 use std::io;
-// use anyhow::anyhow; // Only use anyhow! macro if no default implementation is already provided
+// use anyhow::anyhow; // Only use anyhow! macro if no default implementation is already provided by the crate
 /*
-    The logic behind the anyhow crate is that it provides its own error type.
-    This type has pretty-printing properties and can easily be converted from other errors,
-    like std::io::Error. It's easy to add anyhow to our project.
-    All we have to do is place it as the return type of the main function.
-    Because most error types can be converted to anyhow::Error, we can use ? syntax to remove
-    the expect calls from our code. Also, note that we're using the anyhow! macro to produce an
-    anyhow::Error on the fly that contains the provided error message.
-    Now every panic message caused by an I/O error being returned from within our program will be displayed user-friendly.
+    The logic behind the anyhow crate is that it provides its own error type. This type has
+    pretty-printing properties and can easily be converted from other errors, like std::io::Error.
+    It's easy to add anyhow to our project. All we have to do is place it as the return type of the
+    main function. Because most error types can be converted to anyhow::Error, we can use ? syntax
+    to remove the expect calls from our code. Also, note that we can use the anyhow! macro to
+    produce an anyhow::Error on the fly that contains the provided error message. Now every panic
+    message caused by an I/O error being returned from within our program will be displayed user-friendly.
  */
+use rand::Rng; // The Rng trait defines methods that random number generators implement
 
 
 fn main() -> anyhow::Result<()> {
     println!("Guess the number!");
+
+    // Q# style syntax for range where = indicates inclusive
+    // the rand::thread_rng function that gives us the particular random number generator:
+    // one that is local to the current thread of execution and is seeded by the operating system
+    let secret_number = rand::thread_rng().gen_range(1..=100);
 
     println!("Please input your guess.");
 
@@ -29,11 +34,17 @@ fn main() -> anyhow::Result<()> {
     // Returns the number of bytes in the user’s input
     io::stdin().read_line(&mut guess)?;
 
+    // shadowing and trimming the newline character \n that gets appended when the user hits enter after typing their input
     // Without anyhow, the trait `From<ParseIntError>` is not implemented for `std::io::Error`
-    println!(
-        "You guessed: {}",
-        guess.trim().parse::<u32>()?
-    );
+    let guess = guess.trim().parse::<i32>()?;
+
+    if secret_number == guess {
+        println!("You guessed {secret_number} correctly!");
+    }
+    //else if secret_number > guess { }
+    else {
+        println!("You guessed: {guess}, but the secret number was {secret_number}");
+    }
 
     Ok(())
 }
