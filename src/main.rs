@@ -101,4 +101,65 @@ fn main() {
     }
 
     println!("End count = {count}");
+
+    let mut number = 3;
+
+    while number != 0 {
+        println!("{number}!");
+
+        number -= 1;
+    }
+
+    println!("LIFTOFF!!!");
+
+    /*
+        The safety and conciseness of for loops make them the most commonly used loop construct in Rust.
+        Even in situations in which you want to run some code a certain number of times, as in the
+        countdown example that used a while, most Rustaceans would use a for loop. The way to do
+        that would be to use a Range, provided by the standard library, which generates all numbers
+        in sequence starting from one number and ending before another number.
+     */
+
+    for number in (1..4).rev() {
+        println!("{number}!");
+    }
+    println!("LIFTOFF!!!");
+
+    let a = [10, 20, 30, 40, 50];
+
+    for element in a {
+        println!("the value is: {element}");
+    }
+
+    let mut s = String::from("hello");
+
+    s.push_str(", world!"); // push_str() appends a literal to a String
+
+    println!("{}", s); // This will print `hello, world!`
+
+    let x = 5;
+    let y = x;
+
+    let s1 = String::from("hello");
+    let s2 = s1.clone();
+
+    println!("s1 = {}, s2 = {}", s1, s2);
+
+    let mut s = String::from("hello");
+
+    s.push_str("twice");
+
+    change(&mut s);
+
+    let mut s = String::from("hello");
+
+    {
+        let r1 = &mut s;
+    } // r1 goes out of scope here, so we can make a new reference with no problems.
+
+    let r2 = &mut s;
+}
+
+fn change(some_string: &mut String) {
+    some_string.push_str(", world");
 }
