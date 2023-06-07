@@ -204,6 +204,36 @@ fn main() {
     let slice = &a[1..3];
 
     assert_eq!(slice, &[2, 3]);
+
+    let mut user1 = User::build_user(
+        String::from("someusername123"),
+     String::from("someone@example.com")
+    );
+
+    user1.email = String::from("anotheremail@example.com");
+
+    // The syntax .. specifies that the remaining fields not explicitly set should have the same value as the fields in the given instance
+    let user2 = User {
+        email: String::from("another@example.com"),
+        ..user1
+    };
+}
+
+struct User {
+    active: bool,
+    username: String,
+    email: String,
+    sign_in_count: u64,
+}
+impl User {
+    fn build_user(email: String, username: String) -> User {
+        User {
+            active: true,
+            username,
+            email,
+            sign_in_count: 1,
+        }
+    }
 }
 
 fn first_word(slice: &str) -> &str {
