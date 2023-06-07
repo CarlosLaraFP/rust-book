@@ -44,7 +44,7 @@ fn main() {
         or when you want to ensure you always have a fixed number of elements.
         You can also initialize an array to contain the same value for each element by specifying the
         initial value, followed by a semicolon, and then the length of the array in square brackets.
-     */
+
     let a: [i32; 5] = [1, 2, 3, 4, 5];
     //let a = [3; 5];
 
@@ -64,7 +64,7 @@ fn main() {
     let element = a[index];
 
     println!("The value of the element at index {index} is: {element}");
-
+    */
     // Rust has three kinds of loops: loop, while, and for
 
     let mut counter = 0;
@@ -180,6 +180,14 @@ fn main() {
 
     assert_eq!(moved_one, "The");
     assert_eq!(moved_two, slice_two);
+
+    let s = String::from("hello world of software");
+
+    let hello = &s[..5];
+    let world = &s[6..11];
+    let software = &s[15..];
+
+    println!("{hello} {world} {software}");
 }
 
 fn first_word(slice: &str) -> &str {
