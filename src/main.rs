@@ -158,6 +158,35 @@ fn main() {
     } // r1 goes out of scope here, so we can make a new reference with no problems.
 
     let r2 = &mut s;
+
+    let mut s = String::from("hello");
+
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    let r3 = &mut s; // BIG PROBLEM IF r1 AND r2 are referenced afterwards
+
+    println!("{r3}");
+
+    /*
+        Write a function that takes a string of words separated by spaces and returns
+        the first word it finds in that string. If the function does not find a space
+        in the string, the whole string must be one word, so the entire string should be returned.
+     */
+    let slice_one = "The lowest level is the quantum processor";
+    let slice_two = "Quantum";
+
+    let moved_one = first_word(slice_one);
+    let moved_two = first_word(slice_two);
+
+    assert_eq!(moved_one, "The");
+    assert_eq!(moved_two, slice_two);
+}
+
+fn first_word(slice: &str) -> &str {
+    match slice.split_whitespace().rev().last() {
+        Some(word) => word,
+        _ => slice
+    }
 }
 
 fn change(some_string: &mut String) {
