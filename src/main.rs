@@ -289,8 +289,41 @@ fn main() {
         then Option<T> will not implement Copy.
      */
 
-    let x = value_in_cents(Coin::Quarter(UsState::Washington));
+    let coin = Coin::Quarter(UsState::Washington);
+    let x = value_in_cents(&coin);
     println!("{x}");
+
+    println!("{:?}", plus_one(Some(99)));
+    println!("{:?}", plus_one(None));
+
+    let config_max = Some(3u8);
+
+    match config_max {
+        Some(max) => println!("The maximum is configured to be {}", max),
+        _ => (),
+    }
+
+    // The code in the if let block isn’t run if the value doesn’t match the pattern.
+    if let Some(max) = config_max {
+        println!("The maximum is configured to be {}", max);
+    }
+
+    let coins = [Coin::Penny, Coin::Nickel, Coin::Dime, coin];
+    let mut count = 0;
+
+    for coin in coins {
+        if let Coin::Quarter(state) = coin {
+            println!("State quarter from {:?}!", state);
+        } else {
+            count += 1;
+        }
+    }
+
+    println!("{count}");
+}
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    Some(x? + 1)
 }
 
 #[derive(Debug)]
@@ -308,7 +341,7 @@ enum Coin {
     Quarter(UsState),
 }
 
-fn value_in_cents(coin: Coin) -> u8 {
+fn value_in_cents(coin: &Coin) -> u8 {
     match coin {
         Coin::Penny => {
             println!("Lucky penny!");
