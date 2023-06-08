@@ -268,6 +268,71 @@ fn main() {
 
     route(&four);
     route(&six);
+
+    let m = Message::Write(String::from("hello"));
+    m.call();
+
+    let some_number = Some(5);
+    let some_char = Some('e');
+    let absent_number: Option<i32> = None;
+
+    /*
+        Option<T> does not implement the Copy trait by default.
+        Therefore, Option<T> parameters are moved, not copied.
+
+        The Copy trait is only implemented for types that can be safely copied with a simple bit-wise copy,
+        without needing to run any special logic. This includes basic numeric types, references, and other types that do not own heap data.
+
+        In the case of Option<T>, whether it implements Copy depends on whether T implements Copy.
+        If T is a type that implements Copy, then Option<T> will also implement Copy.
+        If T does not implement Copy (for example, if T is a String, Vec<T>, or any other type owning heap data),
+        then Option<T> will not implement Copy.
+     */
+
+    let x = value_in_cents(Coin::Quarter(UsState::Washington));
+    println!("{x}");
+}
+
+#[derive(Debug)]
+enum UsState {
+    Alabama,
+    Alaska,
+    // --snip--
+    Washington
+}
+
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => {
+            println!("Lucky penny!");
+            1
+        }
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state) => {
+            println!("State quarter from {:?}!", state);
+            25
+        },
+    }
+}
+
+enum Message {
+    Quit,
+    Move { x: i32, y: i32 },
+    Write(String),
+    ChangeColor(i32, i32, i32),
+}
+impl Message {
+    fn call(&self) {
+        // method body would be defined here
+    }
 }
 
 fn route(ip_kind: &IpAddr) {
