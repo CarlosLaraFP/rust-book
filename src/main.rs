@@ -235,9 +235,9 @@ fn main() {
     let rectangle_b = Rectangle::new(2, 2);
     let rectangle_c = Rectangle::new(4, 4);
 
-    println!("{:?}, {}, {}", rectangle_a, rectangle_a == rectangle_b, rectangle_a == rectangle_c);
-    println!("{:?}, {}, {}", rectangle_b, rectangle_b == rectangle_a, rectangle_b == rectangle_c);
-    println!("{:?}, {}, {}", rectangle_c, rectangle_c == rectangle_b, rectangle_c == rectangle_a);
+    println!("{:?}, {}, {}", rectangle_a.area(), rectangle_a == rectangle_b, rectangle_a == rectangle_c);
+    println!("{:?}, {}, {}", rectangle_b.area(), rectangle_b == rectangle_a, rectangle_b == rectangle_c);
+    println!("{:?}, {}, {}", rectangle_c.area(), rectangle_c == rectangle_b, rectangle_c == rectangle_a);
 }
 
 struct User {

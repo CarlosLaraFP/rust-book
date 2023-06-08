@@ -16,4 +16,8 @@ impl Rectangle {
             height
         }
     }
+
+    pub fn area(&self) -> u32 {
+        self.width * self.height
+    }
 }
