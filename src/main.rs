@@ -235,7 +235,7 @@ fn main() {
     let rectangle_b = Rectangle::new(2, 2);
     let rectangle_c = Rectangle::new(4, 4);
 
-    println!("{:#?}", rectangle_a);
+    println!("{:#?}", rectangle_a); // println! macro automatically adds & to the object
     println!("{:?}", rectangle_b);
     println!("{}", rectangle_c.area());
     assert!((rectangle_a == rectangle_b));
@@ -255,6 +255,12 @@ fn main() {
         The dbg! macro can be really helpful when you’re trying to figure out what your code is doing!
      */
     dbg!(&rectangle_a);
+
+    assert!(rectangle_a.can_hold(&rectangle_b));
+    assert!(!rectangle_a.can_hold(&rectangle_c));
+    assert!(!rectangle_b.can_hold(&rectangle_c));
+    assert!(rectangle_c.can_hold(&rectangle_a));
+    assert!(rectangle_c.can_hold(&rectangle_b));
 }
 
 struct User {
