@@ -4,6 +4,9 @@
  */
 
 mod guessing_game;
+mod rectangle;
+
+use rectangle::*;
 
 
 fn main() {
@@ -217,6 +220,24 @@ fn main() {
         email: String::from("another@example.com"),
         ..user1
     };
+
+    println!("{}", user2.email);
+    // Both active and sign_in_count are types that implement the Copy trait, so the behavior we discussed in the “Stack-Only Data: Copy” section would apply.
+    // Compilation error if we try to access username because it's been moved into user2 (ownership transferred)
+    println!("{}", user1.email);
+
+    // black and origin values are different types because they’re instances of different tuple structs
+    let black = Color(0, 0, 0);
+    let origin = Point(0, 0, 0);
+    let subject = AlwaysEqual;
+
+    let rectangle_a = Rectangle::new(2, 2);
+    let rectangle_b = Rectangle::new(2, 2);
+    let rectangle_c = Rectangle::new(4, 4);
+
+    println!("{:?}, {}, {}", rectangle_a, rectangle_a == rectangle_b, rectangle_a == rectangle_c);
+    println!("{:?}, {}, {}", rectangle_b, rectangle_b == rectangle_a, rectangle_b == rectangle_c);
+    println!("{:?}, {}, {}", rectangle_c, rectangle_c == rectangle_b, rectangle_c == rectangle_a);
 }
 
 struct User {
@@ -235,6 +256,18 @@ impl User {
         }
     }
 }
+
+/*
+    Tuple structs are useful when you want to give the whole tuple a name and make the tuple a different
+    type from other tuples, and when naming each field as in a regular struct would be verbose or redundant.
+    Tuple struct instances are similar to tuples in that you can deconstruct them into their individual pieces,
+    and you can use a . followed by the index to access an individual value.
+    Unit-like structs can be useful when you need to implement a trait on some type
+    but don’t have any data that you want to store in the type itself
+ */
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+struct AlwaysEqual;
 
 fn first_word(slice: &str) -> &str {
     match slice.split_whitespace().rev().last() {
