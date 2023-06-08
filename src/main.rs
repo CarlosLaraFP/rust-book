@@ -261,6 +261,26 @@ fn main() {
     assert!(!rectangle_b.can_hold(&rectangle_c));
     assert!(rectangle_c.can_hold(&rectangle_a));
     assert!(rectangle_c.can_hold(&rectangle_b));
+
+    //  We automatically get constructor functions defined as a result of defining the enum.
+    let four = IpAddr::V4(127, 0, 0, 1);
+    let six = IpAddr::V6(String::from("::1"));
+
+    route(&four);
+    route(&six);
+}
+
+fn route(ip_kind: &IpAddr) {
+    match ip_kind {
+        IpAddr::V4(a, b, c, d) => println!("V4 -> {a}.{b}.{c}.{d}"),
+        IpAddr::V6(value) => println!("V6 -> {value}")
+    }
+}
+
+// another advantage to using an enum rather than a struct: each variant can have different types and amounts of associated data
+enum IpAddr {
+    V4(u8, u8, u8, u8),
+    V6(String),
 }
 
 struct User {

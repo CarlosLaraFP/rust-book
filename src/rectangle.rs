@@ -1,4 +1,6 @@
 /*
+    Structs let you create custom types that are meaningful for your domain.
+
     To understand when we might want to use structs,
     let’s write a program that calculates the area of a rectangle.
 
@@ -58,13 +60,17 @@ impl Rectangle {
         We want an instance of Rectangle to take another instance of Rectangle and return
         true if the second Rectangle can fit completely within self (the first Rectangle);
         otherwise, it should return false.
+        if both height and width of another are <= to self, return true; else false
      */
     pub fn can_hold(&self, another: &Rectangle) -> bool {
-        // if both height and width of another are <= to self, return true; else false
-        if self.width >= another.width && self.height >= another.height {
-            true
-        } else {
-            false
+        self.width >= another.width && self.height >= another.height
+    }
+
+    // associated constructor function (i.e. static factory method)
+    pub fn square(size: u32) -> Self {
+        Self {
+            width: size,
+            height: size,
         }
     }
 }
