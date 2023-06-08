@@ -235,9 +235,26 @@ fn main() {
     let rectangle_b = Rectangle::new(2, 2);
     let rectangle_c = Rectangle::new(4, 4);
 
-    println!("{:?}, {}, {}", rectangle_a.area(), rectangle_a == rectangle_b, rectangle_a == rectangle_c);
-    println!("{:?}, {}, {}", rectangle_b.area(), rectangle_b == rectangle_a, rectangle_b == rectangle_c);
-    println!("{:?}, {}, {}", rectangle_c.area(), rectangle_c == rectangle_b, rectangle_c == rectangle_a);
+    println!("{:#?}", rectangle_a);
+    println!("{:?}", rectangle_b);
+    println!("{}", rectangle_c.area());
+    assert!((rectangle_a == rectangle_b));
+    assert!(!(rectangle_a == rectangle_c));
+    assert!((rectangle_b == rectangle_a));
+    assert!(!(rectangle_b == rectangle_c));
+    assert!(!(rectangle_c == rectangle_b));
+    assert!((rectangle_c == rectangle_c));
+    /*
+        Another way to print out a value using the Debug format is to use the dbg! macro,
+        which takes ownership of an expression (as opposed to println!, which takes a reference),
+        prints the file and line number of where that dbg! macro call occurs in your code along
+        with the resultant value of that expression, and returns ownership of the value.
+
+        Calling the dbg! macro prints to the standard error console stream (stderr),
+        as opposed to println!, which prints to the standard output console stream (stdout).
+        The dbg! macro can be really helpful when you’re trying to figure out what your code is doing!
+     */
+    dbg!(&rectangle_a);
 }
 
 struct User {

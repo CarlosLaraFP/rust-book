@@ -13,10 +13,11 @@ impl Rectangle {
     pub fn new(width: u32, height: u32) -> Self {
         Rectangle {
             width,
-            height
+            height: dbg!(height * 2)
         }
     }
 
+    // accessing fields of a borrowed struct instance does not move the field values
     pub fn area(&self) -> u32 {
         self.width * self.height
     }
