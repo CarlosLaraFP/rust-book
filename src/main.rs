@@ -5,8 +5,11 @@
 
 mod guessing_game;
 mod rectangle;
-
 use rectangle::*;
+
+use crate::garden::vegetables::Asparagus;
+
+pub mod garden;
 
 
 fn main() {
@@ -320,7 +323,12 @@ fn main() {
     }
 
     println!("{count}");
+
+    let plant = Asparagus {};
+    println!("I'm growing {:?}!", plant);
 }
+
+
 
 fn plus_one(x: Option<i32>) -> Option<i32> {
     Some(x? + 1)
