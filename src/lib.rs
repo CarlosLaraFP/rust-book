@@ -27,28 +27,15 @@
     same module as front_of_house (that is, eat_at_restaurant and front_of_house are siblings),
     we can refer to front_of_house from eat_at_restaurant
  */
-mod front_of_house {
-    pub mod hosting {
-        pub fn add_to_waitlist() {}
+mod front_of_house;
 
-        fn seat_at_table() {}
-    }
-
-    mod serving {
-        fn take_order() {}
-
-        fn serve_order() {}
-
-        fn take_payment() {}
-    }
-}
+pub use crate::front_of_house::hosting;
 
 use std::collections::*; // glob operator
 //use std::{cmp::Ordering, io};
 use std::io::{self, Write};
 // brings std::io and std::io::Write into scope
 
-pub use crate::front_of_house::hosting;
 /*
     Our preference in general is to specify absolute paths because it’s more likely
     we’ll want to move code definitions and item calls independently of each other.
