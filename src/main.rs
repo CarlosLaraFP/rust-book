@@ -11,6 +11,21 @@ use rectangle::*;
 use crate::garden::vegetables::Asparagus;
 // public module
 pub mod garden;
+/*
+    When we bring a name into scope with the use keyword, the name available in the new scope
+    is private. To enable the code that calls our code to refer to that name as if it had been
+    defined in that code’s scope, we can combine pub and use. This technique is called re-exporting
+    because we’re bringing an item into scope but also making that item available for others to
+    bring into their scope.
+
+    Re-exporting is useful when the internal structure of your code is different from how
+    programmers calling your code would think about the domain. For example, in this restaurant
+    metaphor, the people running the restaurant think about “front of house” and “back of house.”
+    But customers visiting a restaurant probably won’t think about the parts of the restaurant in
+    those terms. With pub use, we can write our code with one structure but expose a different
+    structure. Doing so makes our library well organized for programmers working on the library
+    and programmers calling the library.
+ */
 
 
 fn main() {
