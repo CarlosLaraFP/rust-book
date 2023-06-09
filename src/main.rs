@@ -7,8 +7,9 @@ mod guessing_game;
 mod rectangle;
 use rectangle::*;
 
+// sub-module
 use crate::garden::vegetables::Asparagus;
-
+// public module
 pub mod garden;
 
 
