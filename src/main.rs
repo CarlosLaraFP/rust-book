@@ -342,6 +342,32 @@ fn main() {
 
     let plant = Asparagus {};
     println!("I'm growing {:?}!", plant);
+
+    // Vectors allow you to store more than one value in a single data structure that
+    // puts all the values next to each other in memory.
+    let v: Vec<i32> = Vec::new();
+    let v = vec![1, 2, 3];
+    let mut v = Vec::new();
+
+    v.push(5);
+    v.push(6);
+    v.push(7);
+    v.push(8);
+
+    println!("{:?}", v);
+
+    // There are two ways to reference a value stored in a vector: via indexing or using the get method
+
+    let third: &i32 = &v[2];
+
+    println!("The third element is {third}");
+
+    let third: Option<&i32> = v.get(2);
+
+    match third {
+        Some(third) => println!("The third element is {third}"),
+        None => println!("There is no third element."),
+    }
 }
 
 
