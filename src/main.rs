@@ -354,7 +354,17 @@ fn main() {
     v.push(7);
     v.push(8);
 
-    println!("{:?}", v);
+    for i in &v {
+        println!("{i}");
+    }
+
+    let mut v = vec![100, 32, 57];
+    // We can also iterate over mutable references to each element in a mutable vector to make changes to all the elements
+    // To change the value that the mutable reference refers to, we have to use
+    // the * dereference operator to get to the value in i before we can use the += operator.
+    for i in &mut v {
+        *i += 50; // the dereference operator follows the pointer to the value
+    }
 
     // There are two ways to reference a value stored in a vector: via indexing or using the get method
 
