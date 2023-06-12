@@ -475,8 +475,73 @@ fn main() {
     scores.insert(blue_team, 10);
     scores.insert(yellow_team, 50);
 
-    let score = scores.get(&blue_team).copied().unwrap_or(0);
+    let score = scores
+        .get(blue_team)
+        .copied()
+        .unwrap_or(0);
+
     println!("Blue team score: {score}");
+
+    // prints in arbitrary order because HashMaps are unordered
+    for (key, value) in &scores {
+        println!("{key}: {value}");
+    }
+
+    // Overwriting a Value
+    scores.insert(blue_team, 25);
+    println!("{:?}", scores);
+
+    /*
+        Adding a Key and Value Only If a Key Isn’t Present
+
+        The or_insert method on Entry is defined to return a mutable reference to the value for the
+        corresponding Entry key if that key exists, and if not, inserts the parameter as the new
+        value for this key and returns a mutable reference to the new value.
+     */
+    let x = scores
+        .entry("Green")
+        .or_insert(100);
+
+    let y = scores
+        .entry(blue_team)
+        .or_insert(50);
+
+    println!("{:?}", scores);
+
+    // Updating a Value Based on the Old Value
+    let text = "hello world wonderful world";
+
+    let mut map = HashMap::new();
+
+    for word in text.split_whitespace() {
+        let count = map
+            .entry(word)
+            .or_insert(0);
+
+        *count += 1;
+    }
+
+    println!("{:?}", map);
+
+    //let v = vec![1, 2, 3];
+    // RUST_BACKTRACE=1 cargo run
+    // run with `RUST_BACKTRACE=full` for a verbose backtrace
+    //v[99];
+
+    // like the Option enum, the Result enum and its variants have been brought into scope by the
+    // prelude, so we don’t need to specify Result:: before the Ok and Err variants in the match arms
+    let greeting_file = match std::fs::File::open("hello.txt") {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            std::io::ErrorKind::NotFound => match std::fs::File::create("hello.txt") {
+                Ok(fc) => fc,
+                Err(e) => panic!("Problem creating the file: {:?}", e),
+            },
+            other_error => {
+                panic!("Problem opening the file: {:?}", other_error);
+            }
+        }
+    };
 }
 
 
