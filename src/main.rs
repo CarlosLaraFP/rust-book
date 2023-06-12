@@ -31,7 +31,19 @@ use std::fs::File;
 use std::io::{self, Read};
 
 
-fn main() -> Result<(), Box<dyn std::error::Error>> { // any kind of error
+fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
+    /*
+        When a main function returns a Result<(), E>, the executable will exit with a value of 0
+        if main returns Ok(()) and will exit with a nonzero value if main returns an Err value.
+        Executables written in C return integers when they exit: programs that exit successfully
+        return the integer 0, and programs that error return some integer other than 0.
+        Rust also returns integers from executables to be compatible with this convention.
+
+        The main function may return any types that implement the std::process::Termination trait,
+        which contains a function report that returns an ExitCode. Consult the standard library
+        documentation for more information on implementing the Termination trait for your own types.
+     */
+
     // match guessing_game::start_game() {
     //     Err(error) => println!("{error}"),
     //     _ => ()
@@ -566,6 +578,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // any kind of error
     // let greeting_file = File::open("hello.txt").unwrap();
 
     let greeting_file = std::fs::read_to_string("hello.txt")?;
+
+    let home: std::net::IpAddr = "127.0.0.1"
+        .parse()
+        .expect("Hardcoded IP address should be valid");
 
     Ok(())
 }

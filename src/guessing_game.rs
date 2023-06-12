@@ -12,16 +12,32 @@ use std::io;
 use rand::Rng; // The Rng trait defines methods that random number generators implement
 use std::cmp::Ordering; // enum with the variants Less, Greater, and Equal. These are the three outcomes that are possible when you compare two values.
 
-const RANGE_UPPER_LIMIT: u32 = 100;
+const RANGE_UPPER_LIMIT: i32 = 100;
 
+pub struct Guess {
+    value: i32,
+}
+impl Guess {
+    pub fn new(value: i32) -> Guess {
+        if value < 1 || value > 100 {
+            panic!("Guess value must be between 1 and 100, got {}.", value);
+        }
 
-pub fn start_game() -> io::Result<()> {
+        Guess { value }
+    }
+
+    pub fn value(&self) -> i32 {
+        self.value
+    }
+}
+
+pub fn start_game() -> anyhow::Result<()> {
     println!("Guess the number!");
 
     // Q# style syntax for range where = indicates inclusive
     // the rand::thread_rng function that gives us the particular random number generator:
     // one that is local to the current thread of execution and is seeded by the operating system
-    let secret_number: u32 = rand::thread_rng().gen_range(1..=RANGE_UPPER_LIMIT);
+    let secret_number: i32 = rand::thread_rng().gen_range(1..=RANGE_UPPER_LIMIT);
 
     loop {
         println!("Please input your guess.");
@@ -36,15 +52,9 @@ pub fn start_game() -> io::Result<()> {
 
         // Shadowing and trimming the newline character \n that gets appended when the user hits enter after typing their input
         // Without anyhow, the trait `From<ParseIntError>` is not implemented for `std::io::Error`
-        let guess = match guess.trim().parse::<u32>() {
-            Ok(num) => num,
-            Err(error) => {
-                println!("{error}");
-                continue
-            }
-        };
+        let guess = Guess::new(guess.trim().parse::<i32>()?);
 
-        match guess.cmp(&secret_number) {
+        match guess.value.cmp(&secret_number) {
             Ordering::Less => println!("Too small. Try a bigger number!"),
             Ordering::Greater => println!("Too big. Try a small number!"),
             Ordering::Equal => {
