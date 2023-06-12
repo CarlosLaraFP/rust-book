@@ -27,6 +27,9 @@ pub mod garden;
     and programmers calling the library.
  */
 
+use std::fs::File;
+use std::io::{self, Read};
+
 
 fn main() {
     // match guessing_game::start_game() {
@@ -530,10 +533,10 @@ fn main() {
 
     // like the Option enum, the Result enum and its variants have been brought into scope by the
     // prelude, so we don’t need to specify Result:: before the Ok and Err variants in the match arms
-    let greeting_file = match std::fs::File::open("hello.txt") {
+    let greeting_file = match File::open("hello.txt") {
         Ok(file) => file,
         Err(error) => match error.kind() {
-            std::io::ErrorKind::NotFound => match std::fs::File::create("hello.txt") {
+            io::ErrorKind::NotFound => match File::create("hello.txt") {
                 Ok(fc) => fc,
                 Err(e) => panic!("Problem creating the file: {:?}", e),
             },
@@ -542,9 +545,40 @@ fn main() {
             }
         }
     };
+
+    // FP closures (methods) to clean up large nested match expressions when dealing with errors
+    let greeting_file = File::open("hello.txt").unwrap_or_else(|error| {
+        if error.kind() == io::ErrorKind::NotFound {
+            File::create("hello.txt").unwrap_or_else(|error| {
+                panic!("Problem creating the file: {:?}", error);
+            })
+        } else {
+            panic!("Problem opening the file: {:?}", error);
+        }
+    });
+
+    /*
+        In production-quality code, most Rustaceans choose expect rather than unwrap and give more
+        context about why the operation is expected to always succeed. That way, if your assumptions
+        are ever proven wrong, you have more information to use in debugging.
+     */
+    // let greeting_file = File::open("hello.txt").expect("hello.txt should be included in this project");
+    // let greeting_file = File::open("hello.txt").unwrap();
+
+
 }
 
 
+// We don’t have enough information on what the calling code is actually trying to do,
+// so we propagate all the success or error information upward for it to handle appropriately.
+fn read_username_from_file() -> Result<String, io::Error> {
+    let mut username = String::new();
+
+    File::open("hello.txt")?
+        .read_to_string(&mut username)?;
+
+    Ok(username)
+}
 
 fn plus_one(x: Option<i32>) -> Option<i32> {
     Some(x? + 1)
