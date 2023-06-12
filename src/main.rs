@@ -31,7 +31,7 @@ use std::fs::File;
 use std::io::{self, Read};
 
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> { // any kind of error
     // match guessing_game::start_game() {
     //     Err(error) => println!("{error}"),
     //     _ => ()
@@ -565,9 +565,15 @@ fn main() {
     // let greeting_file = File::open("hello.txt").expect("hello.txt should be included in this project");
     // let greeting_file = File::open("hello.txt").unwrap();
 
+    let greeting_file = std::fs::read_to_string("hello.txt")?;
 
+    Ok(())
 }
 
+
+fn last_char_of_first_line(text: &str) -> Option<char> {
+    text.lines().next()?.chars().last()
+}
 
 // We don’t have enough information on what the calling code is actually trying to do,
 // so we propagate all the success or error information upward for it to handle appropriately.
@@ -579,6 +585,12 @@ fn read_username_from_file() -> Result<String, io::Error> {
 
     Ok(username)
 }
+/*
+    Reading a file into a string is a fairly common operation, so the standard library provides the
+    convenient fs::read_to_string function that opens the file, creates a new String, reads the
+    contents of the file, puts the contents into that String, and returns it.
+    fs::read_to_string("hello.txt")
+ */
 
 fn plus_one(x: Option<i32>) -> Option<i32> {
     Some(x? + 1)
