@@ -262,7 +262,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     // black and origin values are different types because they’re instances of different tuple structs
     let black = Color(0, 0, 0);
-    let origin = Point(0, 0, 0);
     let subject = AlwaysEqual;
 
     let rectangle_a = Rectangle::new(2, 2);
@@ -587,11 +586,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     println!("The largest number is {}", largest(&number_list));
 
+    let char_list = vec!['z', 'x', 'a', 'q'];
+
+    println!("The largest char is {}", largest(&char_list));
+
+    let mut p = Point { x: 5, y: 10 };
+    println!("p.x = {}", p.x());
+
+    p.set_x(99);
+    println!("p.x = {}", p.x());
+
     Ok(())
 }
 
 
 fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    /*
+        We read this definition as: the function is generic over some type T that implements the
+        PartialOrd trait. This function has one parameter named list, which is a slice of values of
+        type T. The function will return a reference to a value of the same type T.
+     */
     let mut largest = &list[0];
 
     for number in list {
@@ -601,6 +615,21 @@ fn largest<T: PartialOrd>(list: &[T]) -> &T {
     }
 
     largest
+}
+
+struct Point<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Point<T> {
+    fn x(&self) -> &T {
+        &self.x
+    }
+
+    fn set_x(&mut self, new_value: T) {
+        self.x = new_value
+    }
 }
 
 fn last_char_of_first_line(text: &str) -> Option<char> {
@@ -713,7 +742,7 @@ impl User {
     but don’t have any data that you want to store in the type itself
  */
 struct Color(i32, i32, i32);
-struct Point(i32, i32, i32);
+//struct Point(i32, i32, i32);
 struct AlwaysEqual;
 
 fn first_word(slice: &str) -> &str {
