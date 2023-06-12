@@ -590,15 +590,77 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     println!("The largest char is {}", largest(&char_list));
 
-    let mut p = Point { x: 5, y: 10 };
+    let mut p = Point { x: 5.0, y: 10.0 };
     println!("p.x = {}", p.x());
 
-    p.set_x(99);
+    println!("{}", p.distance_from_origin());
+
+    p.set_x(99.9);
     println!("p.x = {}", p.x());
+
+    let p1 = Point { x: 5, y: 10.4 };
+    let p2 = Point { x: "Hello", y: 'c' };
+    let p3 = p1.mixup(p2);
+    println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
+
+    let tweet = Tweet {
+        username: String::from("mountain_ebooks"),
+        content: String::from(
+            "of course, as you probably already know, nature",
+        ),
+        reply: false,
+        retweet: false,
+    };
+
+    println!("1 new tweet: {}", tweet.summarize());
 
     Ok(())
 }
 
+
+/*
+    Public so that crates depending on this crate can make use of this trait too
+    We can’t implement external traits on external types. For example, we can’t implement the
+    Display trait on Vec<T> within our aggregator crate, because Display and Vec<T> are both
+    defined in the standard library and aren’t local to our aggregator crate. This restriction
+    is part of a property called coherence, and more specifically the orphan rule, so named because
+    the parent type is not present. This rule ensures that other people’s code can’t break your code
+    and vice versa. Without the rule, two crates could implement the same trait for the same type,
+    and Rust wouldn’t know which implementation to use.
+ */
+pub trait Summary {
+    // both return a heap String to be owned by the caller
+
+    fn summarize_author(&self) -> String;
+
+    fn summarize(&self) -> String {
+        format!("(Read more from {}...)", self.summarize_author())
+    }
+}
+
+pub struct NewsArticle {
+    pub headline: String,
+    pub location: String,
+    pub author: String,
+    pub content: String,
+}
+impl Summary for NewsArticle {
+    fn summarize_author(&self) -> String {
+        format!("Written by {}", self.author)
+    }
+}
+
+pub struct Tweet {
+    pub username: String,
+    pub content: String,
+    pub reply: bool,
+    pub retweet: bool,
+}
+impl Summary for Tweet {
+    fn summarize_author(&self) -> String {
+        format!("@{}", self.username)
+    }
+}
 
 fn largest<T: PartialOrd>(list: &[T]) -> &T {
     /*
@@ -617,18 +679,35 @@ fn largest<T: PartialOrd>(list: &[T]) -> &T {
     largest
 }
 
-struct Point<T> {
-    x: T,
-    y: T,
+struct Point<M, N> {
+    x: M,
+    y: N,
 }
-
-impl<T> Point<T> {
-    fn x(&self) -> &T {
+impl<M, N> Point<M, N> {
+    fn x(&self) -> &M {
         &self.x
     }
 
-    fn set_x(&mut self, new_value: T) {
+    fn set_x(&mut self, new_value: M) {
         self.x = new_value
+    }
+
+    /*
+        The purpose of this example is to demonstrate a situation in which some generic parameters
+        are declared with impl and some are declared with the method definition. Here, the generic
+        parameters X1 and Y1 are declared after impl because they go with the struct definition.
+        The generic parameters X2 and Y2 are declared after fn mixup, because they’re only relevant to the method.
+     */
+    fn mixup<X, Y>(self, other: Point<X, Y>) -> Point<M, Y> {
+        Point {
+            x: self.x,
+            y: other.y,
+        }
+    }
+}
+impl Point<f32, f32> {
+    fn distance_from_origin(&self) -> f32 {
+        (self.x.powi(2) + self.y.powi(2)).sqrt()
     }
 }
 
