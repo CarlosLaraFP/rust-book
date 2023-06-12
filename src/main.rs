@@ -583,9 +583,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         .parse()
         .expect("Hardcoded IP address should be valid");
 
+    let number_list = vec![34, 50, 25, 100, 65];
+
+    println!("The largest number is {}", largest(&number_list));
+
     Ok(())
 }
 
+
+fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut largest = &list[0];
+
+    for number in list {
+        if number > largest {
+            largest = number;
+        }
+    }
+
+    largest
+}
 
 fn last_char_of_first_line(text: &str) -> Option<char> {
     text.lines().next()?.chars().last()

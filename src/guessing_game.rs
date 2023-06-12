@@ -26,6 +26,13 @@ impl Guess {
         Guess { value }
     }
 
+    /*
+        This public method is necessary because the value field of the Guess struct is private.
+        It’s important that the value field be private so code using the Guess struct is not allowed
+        to set value directly: code outside the module must use the Guess::new function to create an
+        instance of Guess, thereby ensuring there’s no way for a Guess to have a value that hasn’t
+        been checked by the conditions in the Guess::new function.
+     */
     pub fn value(&self) -> i32 {
         self.value
     }
