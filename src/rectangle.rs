@@ -74,3 +74,22 @@ impl Rectangle {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn larger_can_hold_smaller() {
+        let r = Rectangle::new(4, 4);
+        let s = Rectangle::new(2, 2);
+        assert!(r.can_hold(&s));
+    }
+
+    #[test]
+    fn smaller_cannot_hold_smaller() {
+        let r = Rectangle::new(4, 4);
+        let s = Rectangle::new(2, 2);
+        assert!(!s.can_hold(&r));
+    }
+}

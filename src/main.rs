@@ -2,12 +2,7 @@
     By default, Rust has a set of items defined in the standard library that it brings into the
     scope of every program. This set is called the prelude.
  */
-
-mod guessing_game;
-mod rectangle;
-
 use std::fmt::Display;
-use rectangle::*;
 
 // sub-module
 use crate::garden::vegetables::Asparagus;
@@ -31,6 +26,7 @@ pub mod garden;
 
 use std::fs::File;
 use std::io::{self, Read};
+use rust_book::rectangle::Rectangle; // lib.rs has made this part of the public API with pub mod
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error

@@ -38,7 +38,7 @@ use std::io::{self, Write}; // brings std::io and std::io::Write into scope
 // lib.rs controls module visibility (pub => available for integration testing and external users)
 mod unit_tests;
 pub mod rectangle;
-mod guessing_game;
+pub mod guessing_game;
 
 /*
     Our preference in general is to specify absolute paths because it’s more likely
