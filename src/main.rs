@@ -26,7 +26,7 @@ pub mod garden;
 
 use std::fs::File;
 use std::io::{self, Read};
-use rust_book::rectangle::Rectangle; // lib.rs has made this part of the public API with pub mod
+use rust_book::rectangle::*; // lib.rs has made this part of the public API with pub mod
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
