@@ -631,7 +631,56 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         println!("The longest string is {}", result);
     }
 
+    let novel = String::from("Call me Camila. Some years ago...");
+    let first_sentence = novel.split('.').next().expect("Could not find a '.'");
+    let i = ImportantExcerpt {
+        part: first_sentence,
+    };
+
+    /*
+        One special lifetime we need to discuss is 'static, which denotes that the affected
+        reference can live for the entire duration of the program. The text of this string is
+        stored directly in the program’s binary, which is always available. Therefore,
+        the lifetime of all string literals is 'static.
+     */
+    let s: &'static str = "I have a static lifetime.";
+
     Ok(())
+}
+
+
+fn longest_with_an_announcement<'a, T>(
+    x: &'a str,
+    y: &'a str,
+    ann: T,
+) -> &'a str
+    where
+        T: Display,
+{
+    println!("Announcement! {}", ann);
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+struct ImportantExcerpt<'a> {
+    part: &'a str,
+}
+impl<'a> ImportantExcerpt<'a> {
+    fn level(&self) -> i32 {
+        3
+    }
+    /*
+        There are two input lifetimes, so Rust applies the first lifetime elision rule and gives
+        both &self and announcement their own lifetimes. Then, because one of the parameters is
+        &self, the return type gets the lifetime of &self, and all lifetimes have been accounted for.
+     */
+    fn announce_and_return_part(&self, announcement: &str) -> &str {
+        println!("Attention please: {}", announcement);
+        self.part
+    }
 }
 
 
@@ -639,6 +688,11 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     /*
         The signature means that the lifetime of the reference returned by the function is
         the same as the smaller of the lifetimes of the values referred to by the function arguments.
+        The concrete lifetime that is substituted for 'a is the part of the scope of x that
+        overlaps with the scope of y
+        Lifetime syntax is about connecting the lifetimes of various parameters and return values of
+        functions. Once they’re connected, Rust has enough information to allow memory-safe operations
+        and disallow operations that would create dangling pointers or otherwise violate memory safety.
      */
     if x.len() > y.len() {
         x
