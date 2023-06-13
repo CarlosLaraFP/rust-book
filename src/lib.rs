@@ -36,6 +36,7 @@ use std::collections::*; // glob operator
 use std::io::{self, Write};
 // brings std::io and std::io::Write into scope
 
+mod rectangle; // required for availability in tests module
 // must be included here in lib.rs for cargo test (buildspec)
 mod tests;
 
