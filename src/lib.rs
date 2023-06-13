@@ -33,13 +33,11 @@ pub use crate::front_of_house::hosting;
 
 use std::collections::*; // glob operator
 //use std::{cmp::Ordering, io};
-use std::io::{self, Write};
-// brings std::io and std::io::Write into scope
+use std::io::{self, Write}; // brings std::io and std::io::Write into scope
 
-// must be included here in lib.rs for cargo test (buildspec)
-mod tests;
-// required for availability in tests module
-mod rectangle;
+// lib.rs controls module visibility (pub => available for integration testing and external users)
+mod unit_tests;
+pub mod rectangle;
 mod guessing_game;
 
 /*
