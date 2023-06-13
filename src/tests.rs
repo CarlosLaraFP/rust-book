@@ -15,7 +15,9 @@
 
 #[cfg(test)]
 mod tests {
-    use crate::rectangle::*; // mod rectangle must be in outer scope (lib.rs)
+    // corresponding mod declarations must be in lib.rs
+    use crate::rectangle::*;
+    use crate::guessing_game::*;
     //use super::*; // only counts for the current file scope
 
     #[test]
@@ -58,6 +60,35 @@ mod tests {
             "Greeting did not contain name, value was `{}`",
             result
         );
+    }
+
+    /*
+        Tests that use should_panic can be imprecise. A should_panic test would pass even if the
+        test panics for a different reason from the one we were expecting. To make should_panic
+        tests more precise, we can add an optional expected parameter to the should_panic attribute.
+        The test harness will make sure that the failure message contains the provided text.
+
+        This test will pass because the value we put in the should_panic attribute’s expected
+        parameter is a substring of the message that the Guess::new function panics with. We could
+        have specified the entire panic message that we expect, which in this case would be Guess
+        value must be less than or equal to 100, got 200. What you choose to specify depends on how
+        much of the panic message is unique or dynamic and how precise you want your test to be.
+        In this case, a substring of the panic message is enough to ensure that the code in the
+        test function executes the else if value > 100 case.
+     */
+    #[test]
+    #[should_panic(expected = "value must be between 1 and 100")]
+    fn greater_than_100() {
+        Guess::new(200);
+    }
+
+    #[test]
+    fn it_works() -> Result<(), String> {
+        if 2 + 2 == 4 {
+            Ok(())
+        } else {
+            Err(String::from("two plus two does not equal four"))
+        }
     }
 
     /*
