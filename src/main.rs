@@ -5,6 +5,8 @@
 
 mod guessing_game;
 mod rectangle;
+
+use std::fmt::Display;
 use rectangle::*;
 
 // sub-module
@@ -614,9 +616,93 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     println!("1 new tweet: {}", tweet.summarize());
 
+    notify(&tweet);
+
+    /*
+        &i32        // a reference
+        &'a i32     // a reference with an explicit lifetime
+        &'a mut i32 // a mutable reference with an explicit lifetime
+     */
+    let string1 = String::from("long string is long");
+
+    {
+        let string2 = String::from("xyz");
+        let result = longest(string1.as_str(), string2.as_str());
+        println!("The longest string is {}", result);
+    }
+
     Ok(())
 }
 
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    /*
+        The signature means that the lifetime of the reference returned by the function is
+        the same as the smaller of the lifetimes of the values referred to by the function arguments.
+     */
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+
+struct Pair<T> {
+    x: T,
+    y: T,
+}
+
+impl<T> Pair<T> {
+    fn new(x: T, y: T) -> Self {
+        Self { x, y }
+    }
+}
+
+impl<T: Display + PartialOrd> Pair<T> {
+    fn cmp_display(&self) {
+        if self.x >= self.y {
+            println!("The largest member is x = {}", self.x);
+        } else {
+            println!("The largest member is y = {}", self.y);
+        }
+    }
+}
+
+pub fn notify<T: Summary>(item: &T) {
+    println!("Breaking news! {}", item.summarize());
+}
+/*
+    fn some_function<T, U>(t: &T, u: &U) -> i32
+    where
+        T: Display + Clone,
+        U: Clone + Debug,
+    { ... }
+ */
+
+/*
+    The ability to specify a return type only by the trait it implements is especially useful in the
+    context of closures and iterators. Closures and iterators create types that only the compiler
+    knows or types that are very long to specify. The impl Trait syntax lets you concisely specify
+    that a function returns some type that implements the Iterator trait without needing to write out a very long type.
+ */
+fn returns_summarizable() -> impl Summary {
+    Tweet {
+        username: String::from("horse_ebooks"),
+        content: String::from(
+            "of course, as you probably already know, people",
+        ),
+        reply: false,
+        retweet: false,
+    }
+}
+
+// The impl Trait syntax works for straightforward cases but is syntax sugar for a longer form known as a trait bound
+
+// pub fn notify(item: &impl Summary) {
+//     println!("Breaking news! {}", item.summarize());
+// }
+
+// pub fn notify(item1: &impl Summary, item2: &impl Summary)
 
 /*
     Public so that crates depending on this crate can make use of this trait too
