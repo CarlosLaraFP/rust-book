@@ -36,6 +36,9 @@ use std::collections::*; // glob operator
 use std::io::{self, Write};
 // brings std::io and std::io::Write into scope
 
+// must be included here in lib.rs for cargo test (buildspec)
+mod tests;
+
 /*
     Our preference in general is to specify absolute paths because it’s more likely
     we’ll want to move code definitions and item calls independently of each other.
