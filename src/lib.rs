@@ -39,6 +39,7 @@ use std::io::{self, Write}; // brings std::io and std::io::Write into scope
 mod unit_tests;
 pub mod rectangle;
 pub mod guessing_game;
+pub mod shirts;
 
 /*
     Our preference in general is to specify absolute paths because it’s more likely

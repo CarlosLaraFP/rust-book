@@ -27,6 +27,7 @@ pub mod garden;
 use std::fs::File;
 use std::io::{self, Read};
 use rust_book::rectangle::*; // lib.rs has made this part of the public API with pub mod
+use rust_book::shirts::*;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -640,6 +641,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         the lifetime of all string literals is 'static.
      */
     let s: &'static str = "I have a static lifetime.";
+
+    let store = Inventory {
+        shirts: vec![ShirtColor::Blue, ShirtColor::Red, ShirtColor::Blue],
+    };
+
+    let user_pref1 = Some(ShirtColor::Red);
+    let giveaway1 = store.giveaway(user_pref1);
+    println!(
+        "The user with preference {:?} gets {:?}",
+        user_pref1, giveaway1
+    );
+
+    let user_pref2 = None;
+    let giveaway2 = store.giveaway(user_pref2);
+    println!(
+        "The user with preference {:?} gets {:?}",
+        user_pref2, giveaway2
+    );
 
     Ok(())
 }
