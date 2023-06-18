@@ -660,6 +660,68 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         user_pref2, giveaway2
     );
 
+    let expensive_closure = |num: u32| -> u32 {
+        println!("calculating slowly...");
+        std::thread::sleep(std::time::Duration::from_secs(1));
+        num
+    };
+
+    //println!("{}", expensive_closure(32));
+
+    fn  add_one_v1(x: u32) -> u32 { x + 1 }
+    let add_one_v2 = |x: u32| -> u32 { x + 1 };
+    /*
+        let add_one_v3 = |x| { x + 1 };
+        let add_one_v4 = |x| x + 1;
+        The closures need to be evaluated to be able to compile because the types will be inferred
+        from their usage. This is similar to let v = Vec::new(); needing either type annotations or
+        values of some type to be inserted into the Vec for Rust to be able to infer the type.
+     */
+
+    let list = vec![1, 2, 3];
+    println!("Before defining closure: {:?}", list);
+    let only_borrows = || println!("From closure: {:?}", &list);
+    println!("Before calling closure: {:?}", &list);
+    only_borrows();
+    println!("After calling closure: {:?}", &list);
+
+    let mut list = vec![1, 2, 3];
+    println!("Before defining closure: {:?}", list);
+    let mut borrows_mutably = || list.push(7);
+    // fails compilation because list is still borrowed mutably until the final closure call
+    //println!("Before calling closure: {:?}", list);
+    borrows_mutably();
+    println!("After calling closure: {:?}", list);
+
+    let list = vec![1, 2, 3];
+    println!("Before defining closure: {:?}", list);
+    /*
+        force the closure to take ownership of the values it uses in the environment
+        Capture a closure's environment by value. Keyword move converts any variables captured by
+        reference or mutable reference to variables captured by value. This technique is mostly
+        useful when passing a closure to a new thread to move the data so that it’s owned by the new thread.
+     */
+    std::thread::spawn(move || println!("From thread: {:?}", list))
+        .join()
+        .unwrap();
+
+    let mut list = [
+        Rectangle::new(10, 1),
+        Rectangle::new(3, 5),
+        Rectangle::new(7, 12),
+    ];
+
+    let mut num_sort_operations = 0;
+
+    list.sort_by_key(|r| {
+        num_sort_operations += 1;
+        r.width
+    });
+
+    println!("{:#?}, sorted in {num_sort_operations} operations", list);
+
+    // Many iterator methods take closure arguments,
+
     Ok(())
 }
 
