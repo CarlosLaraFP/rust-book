@@ -720,7 +720,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     println!("{:#?}, sorted in {num_sort_operations} operations", list);
 
-    // Many iterator methods take closure arguments,
+    // Many iterator methods take closure arguments
+
+    let v1 = vec![1, 2, 3];
+
+    let mut v1_iter = v1.iter();
+
+    assert_eq!(v1_iter.next(), Some(&1));
+    assert_eq!(v1_iter.next(), Some(&2));
+    assert_eq!(v1_iter.next(), Some(&3));
+    assert_eq!(v1_iter.next(), None);
 
     Ok(())
 }
