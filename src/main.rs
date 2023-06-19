@@ -722,6 +722,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     // Many iterator methods take closure arguments
 
+    /*
+        Calling the next method on an iterator changes internal state that the iterator uses to keep
+        track of where it is in the sequence. In other words, this code consumes, or uses up, the
+        iterator. Each call to next eats up an item from the iterator. We didn’t need to make
+        v1_iter mutable when we used a for loop because the loop took ownership of v1_iter and
+        made it mutable behind the scenes. Also note that the values we get from the calls to next
+        are immutable references to the values in the vector. The iter method produces an iterator
+        over immutable references. If we want to create an iterator that takes ownership of v1 and
+        returns owned values, we can call into_iter instead of iter. Similarly, if we want to
+        iterate over mutable references, we can call iter_mut instead of iter.
+     */
+
     let v1 = vec![1, 2, 3];
 
     let mut v1_iter = v1.iter();
@@ -730,6 +742,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     assert_eq!(v1_iter.next(), Some(&2));
     assert_eq!(v1_iter.next(), Some(&3));
     assert_eq!(v1_iter.next(), None);
+
+    let mut v1 = vec![1, 2, 3];
+    let mut v1_iter = v1.iter_mut();
+    *v1_iter.next().unwrap() += 1;
+    *v1_iter.next().unwrap() += 1;
+    *v1_iter.next().unwrap() += 1;
+
+    assert_eq!(&v1, &vec![2, 3, 4]);
 
     Ok(())
 }
