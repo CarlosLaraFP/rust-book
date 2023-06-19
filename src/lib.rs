@@ -40,6 +40,7 @@ mod unit_tests;
 pub mod rectangle;
 pub mod guessing_game;
 pub mod shirts;
+pub mod shoes;
 
 /*
     Our preference in general is to specify absolute paths because it’s more likely

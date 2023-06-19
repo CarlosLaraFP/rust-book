@@ -28,6 +28,7 @@ use std::fs::File;
 use std::io::{self, Read};
 use rust_book::rectangle::*; // lib.rs has made this part of the public API with pub mod
 use rust_book::shirts::*;
+use rust_book::shoes::*;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -750,6 +751,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     *v1_iter.next().unwrap() += 1;
 
     assert_eq!(&v1, &vec![2, 3, 4]);
+
+    let x = 10;
+    v1
+        .iter()
+        .map(|i| i + &x)
+        .filter(|i| i < &(x + 4))
+        .for_each(|j| println!("{j}"));
+
+
 
     Ok(())
 }
