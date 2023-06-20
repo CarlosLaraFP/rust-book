@@ -1,3 +1,14 @@
+//! # Rust Book
+//!
+//! `rust_book` contains the book's code written by hand.
+//! Projects are separated into their own crates, in their own GitHub repos.
+//! Documentation comments within items are useful for describing crates and modules especially.
+//! Use them to explain the overall purpose of the container to help your users understand the crate’s organization.
+
+pub use self::kinds::PrimaryColor;
+pub use self::kinds::SecondaryColor;
+pub use self::utils::mix;
+
 // Modules can also hold definitions for other items, such as structs, enums, constants, traits
 // src/main.rs and src/lib.rs are called crate roots.
 // The reason for their name is that the contents of either of these two files form a module
@@ -55,6 +66,25 @@ pub mod shoes;
 pub fn add_one(x: i32) -> i32 {
     x + 1
 }
+/*
+    cargo doc --open
+
+    We used the # Examples Markdown heading to create a section in the HTML with the title “Examples.”
+    Here are some other sections that crate authors commonly use in their documentation:
+
+    Panics: The scenarios in which the function being documented could panic. Callers of the function
+    who don’t want their programs to panic should make sure they don’t call the function in these situations.
+
+    Errors: If the function returns a Result, describing the kinds of errors that might occur and
+    what conditions might cause those errors to be returned can be helpful to callers so they can
+    write code to handle the different kinds of errors in different ways.
+
+    Safety: If the function is unsafe to call (we discuss unsafety in Chapter 19), there should be a section
+    explaining why the function is unsafe and covering the invariants that the function expects callers to uphold.
+
+    Most documentation comments don’t need all of these sections, but this is a good checklist to
+    remind you of the aspects of your code users will be interested in knowing about.
+ */
 
 /*
     Our preference in general is to specify absolute paths because it’s more likely
@@ -123,4 +153,30 @@ fn function1() -> fmt::Result {
 
 fn function2() -> IoResult<()> {
     Ok(())
+}
+
+pub mod kinds {
+    /// The primary colors according to the RYB color model.
+    pub enum PrimaryColor {
+        Red,
+        Yellow,
+        Blue,
+    }
+
+    /// The secondary colors according to the RYB color model.
+    pub enum SecondaryColor {
+        Orange,
+        Green,
+        Purple,
+    }
+}
+
+pub mod utils {
+    use crate::kinds::*;
+
+    /// Combines two primary colors in equal amounts to create
+    /// a secondary color.
+    pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> SecondaryColor {
+        SecondaryColor::Purple
+    }
 }
