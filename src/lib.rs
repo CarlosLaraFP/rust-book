@@ -52,6 +52,7 @@ pub mod rectangle;
 pub mod guessing_game;
 pub mod shirts;
 pub mod shoes;
+pub mod smart_pointers;
 
 /// Adds one to the number given.
 ///

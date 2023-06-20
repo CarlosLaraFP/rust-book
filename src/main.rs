@@ -29,6 +29,7 @@ use std::io::{self, Read};
 use rust_book::rectangle::*; // lib.rs has made this part of the public API with pub mod
 use rust_book::shirts::*;
 use rust_book::shoes::*;
+use rust_book::smart_pointers::*;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -759,11 +760,82 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         .filter(|i| i < &(x + 4))
         .for_each(|j| println!("{j}"));
 
+    // Smart pointer type that uniquely owns a heap allocation of type T
+    // The box is stored on the stack and the data it points to is stored on the heap.
+    // Pointers have a known size at compile time and therefore are stored on the stack at runtime.
+    let b = Box::new(5);
+    println!("b = {}", b);
 
+    //let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
+
+    let x = 5;
+    let y = &x;
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+
+    /*
+        The main difference is that here we set y to be an instance of a Box<T> pointing to a
+        copied value of x rather than a reference pointing to the value of x. In the last assertion,
+        we can use the dereference operator to follow the pointer of the Box<T> in the same way
+        that we did when y was a reference.
+     */
+    let x = 5;
+    let y = Box::new(x);
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+
+    let x = 5;
+    let y = MyBox::new(x);
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+
+    /*
+        deref coercion for flexible fn definitions
+
+        When the Deref trait is defined for the types involved, Rust will analyze the types and use
+        Deref::deref as many times as necessary to get a reference to match the parameter’s type.
+        The number of times that Deref::deref needs to be inserted is resolved at compile time,
+        so there is no runtime penalty for taking advantage of deref coercion!
+     */
+    let hello = |name: &str| println!("Hello, {name}!");
+    let m = MyBox::new(String::from("Rust"));
+    hello(&m);
+
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    let b = Cons(3, Rc::clone(&a));
+    let c = Cons(4, Rc::clone(&a));
+
+    let a = Rc::new(Cons(5, Rc::new(Cons(10, Rc::new(Nil)))));
+    println!("count after creating a = {}", Rc::strong_count(&a));
+
+    let b = Cons(3, Rc::clone(&a));
+    println!("count after creating b = {}", Rc::strong_count(&a));
+
+    {
+        let c = Cons(4, Rc::clone(&a));
+        println!("count after creating c = {}", Rc::strong_count(&a));
+    }
+
+    println!("count after c goes out of scope = {}", Rc::strong_count(&a));
 
     Ok(())
 }
 
+use crate::List::{Cons, Nil};
+use std::rc::Rc;
+
+enum List {
+    Cons(i32, Rc<List>),
+    Nil,
+}
+
+// enum List {
+//     Cons(i32, Box<List>),
+//     Nil,
+// }
 
 fn longest_with_an_announcement<'a, T>(
     x: &'a str,
