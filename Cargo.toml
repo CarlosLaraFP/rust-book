@@ -1,7 +1,12 @@
 [package]
-name = "rust-book"
+name = "rust_book"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "The Rust programming language book by CarlosLaraFP"
+
+# Use the Semantic Versioning rules to decide what an appropriate next version number is based on the
+# kinds of changes you’ve made. Then run cargo publish to upload the new version (after crates.io API key).
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -19,3 +24,9 @@ anyhow = "1.0" # Excellent crate for displaying useful and pretty errors to user
 rand = "0.8.5" # The rand crate is a library crate, which contains code that is intended to be used in other programs and can’t be executed on its own.
 
 # cargo doc --open
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
