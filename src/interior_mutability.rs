@@ -54,11 +54,21 @@ mod tests {
         }
     }
 
+    /*
+        The borrow method returns the smart pointer type Ref<T>, and borrow_mut returns the smart
+        pointer type RefMut<T>. Both types implement Deref, so we can treat them like regular
+        references. The RefCell<T> keeps track of how many Ref<T> and RefMut<T> smart pointers are
+        currently active. Every time we call borrow, the RefCell<T> increases its count of how many
+        immutable borrows are active. When a Ref<T> value goes out of scope, the count of immutable
+        borrows goes down by one. Just like the compile-time borrowing rules, RefCell<T> lets us
+        have many immutable borrows or one mutable borrow at any point in time. If we try to
+        violate these rules, rather than getting a compiler error as we would with references,
+        the implementation of RefCell<T> will panic at runtime.
+     */
+
     impl Messenger for MockMessenger {
         fn send(&self, message: &str) {
-            self.sent_messages
-                .borrow_mut()
-                .push(String::from(message));
+            self.sent_messages.borrow_mut().push(String::from(message));
         }
     }
 
