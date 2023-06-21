@@ -824,7 +824,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     Ok(())
 }
 
+
+/*
+    RefCell<T> is useful when you are certain your code follows the borrowing rules but the
+    compiler is unable to understand and guarantee that. With references and Box<T>, the borrowing
+    rules’ invariants are enforced at compile time. With RefCell<T>, these invariants are enforced
+    at runtime. With references, if you break these rules, you’ll get a compiler error. With
+    RefCell<T>, if you break these rules, your program will panic and exit. RefCell<T> is only for
+    use in single-threaded scenarios. RefCell<T> allows immutable or mutable borrows checked at runtime.
+
+    Mutating the value inside an immutable value is the interior mutability pattern.
+ */
+
 use crate::List::{Cons, Nil};
+/*
+    We use the Rc<T> type when we want to allocate some data on the heap for multiple parts of our
+    program to read and we can’t determine at compile time which part will finish using the data last.
+    The implementation of the Drop trait decreases the reference count automatically when an Rc<T> value goes out of scope.
+    Rc<T> is only for use in single-threaded scenarios and can replace the use of lifetime parameters / moves.
+    Rc<T> enables passing references while avoiding lifetime parameters and avoiding moving ownership.
+ */
 use std::rc::Rc;
 
 enum List {

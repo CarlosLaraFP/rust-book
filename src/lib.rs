@@ -53,6 +53,7 @@ pub mod guessing_game;
 pub mod shirts;
 pub mod shoes;
 pub mod smart_pointers;
+pub mod interior_mutability;
 
 /// Adds one to the number given.
 ///
