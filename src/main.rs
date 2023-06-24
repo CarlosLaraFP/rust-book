@@ -30,6 +30,8 @@ use rust_book::rectangle::*; // lib.rs has made this part of the public API with
 use rust_book::shirts::*;
 use rust_book::shoes::*;
 use rust_book::smart_pointers::*;
+use std::sync::mpsc;
+use std::thread;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -838,6 +840,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     println!("a after = {:?}", a);
     println!("b after = {:?}", b);
     println!("c after = {:?}", c);
+
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let val = String::from("hi");
+        tx.send(val).unwrap();
+    });
+
+    println!("Got: {}", rx.recv()?);
 
     Ok(())
 }
