@@ -32,6 +32,7 @@ use rust_book::shoes::*;
 use rust_book::smart_pointers::*;
 use std::sync::mpsc;
 use std::thread;
+use std::sync::Mutex;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -881,6 +882,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     for received in rx {
         println!("Thread A got: {received}");
     }
+
+    let m = Mutex::new(5);
+
+    {
+        let mut num = m.lock().unwrap();
+        *num += 5;
+    }
+
+    println!("m = {:?}", m);
 
     Ok(())
 }
