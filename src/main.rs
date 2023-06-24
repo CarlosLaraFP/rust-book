@@ -843,12 +843,44 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     let (tx, rx) = mpsc::channel();
 
+    let tx1 = tx.clone();
+
     thread::spawn(move || {
-        let val = String::from("hi");
-        tx.send(val).unwrap();
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("thread"),
+            String::from("B"),
+        ];
+
+        for val in vals {
+            tx1.send(val).unwrap();
+            thread::sleep(Duration::from_millis(500));
+        }
+        // When the transmitter closes, recv will return an error to signal that no more values will be coming.
     });
 
-    println!("Got: {}", rx.recv()?);
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("more"),
+            String::from("messages"),
+            String::from("from"),
+            String::from("thread"),
+            String::from("C"),
+        ];
+
+        for val in vals {
+            tx.send(val).unwrap();
+            thread::sleep(Duration::from_millis(500));
+        }
+    });
+
+    // recv blocks the main thread’s execution and waits until a value is sent down the channel.
+    // we’re not calling the recv function explicitly anymore: instead, we’re treating rx as an iterator.
+    // For each value received, we’re printing it. When the channel is closed, iteration will end.
+    for received in rx {
+        println!("Thread A got: {received}");
+    }
 
     Ok(())
 }
@@ -876,6 +908,7 @@ use crate::List::{Cons, Nil};
  */
 use std::rc::Rc;
 use std::cell::RefCell;
+use std::time::Duration;
 
 #[derive(Debug)]
 enum List {
