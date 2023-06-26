@@ -30,7 +30,7 @@ use rust_book::rectangle::*; // lib.rs has made this part of the public API with
 use rust_book::shirts::*;
 use rust_book::shoes::*;
 use rust_book::smart_pointers::*;
-use std::sync::mpsc;
+use std::sync::{Arc, mpsc};
 use std::thread;
 use std::sync::Mutex;
 
@@ -883,14 +883,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         println!("Thread A got: {received}");
     }
 
+    // The type of m is Mutex<i32>, not i32, so we must call lock to be able to use the i32 value
     let m = Mutex::new(5);
 
     {
+        /*
+            The call to lock would fail if another thread holding the lock panicked.
+            In that case, no one would ever be able to get the lock, so we’ve chosen
+            to unwrap and have this thread panic if we’re in that situation.
+            After we’ve acquired the lock, the return value is a mutable reference to the data inside.
+            The call to lock returns a smart pointer called MutexGuard, wrapped in a LockResult that
+            we handled with the call to unwrap. The MutexGuard smart pointer implements Deref to
+            point at our inner data; the smart pointer also has a Drop implementation that releases
+            the lock automatically when a MutexGuard goes out of scope, which happens at the end of
+            the inner scope. As a result, we don’t risk forgetting to release the lock and blocking
+            the mutex from being used by other threads, because the lock release happens automatically.
+         */
         let mut num = m.lock().unwrap();
         *num += 5;
     }
 
     println!("m = {:?}", m);
+
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Result: {}", *counter.lock().unwrap());
 
     Ok(())
 }
