@@ -905,6 +905,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     println!("m = {:?}", m);
 
+    /*
+        counter is immutable but we can get a mutable reference to the value inside it. This means
+        Mutex<T> provides interior mutability. In the same way we used RefCell<T> to allow us to
+        mutate contents inside an Rc<T>, we use Mutex<T> to mutate contents inside an Arc<T>
+        Mutex<T> comes with the risk of creating deadlocks. These occur when an operation needs to
+        lock two resources and two threads have each acquired one of the locks, causing them to wait
+        for each other forever. The standard library API documentation for Mutex<T> and MutexGuard offers useful information.
+     */
     let counter = Arc::new(Mutex::new(0));
     let mut handles = vec![];
 

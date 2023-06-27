@@ -54,6 +54,7 @@ pub mod shirts;
 pub mod shoes;
 pub mod smart_pointers;
 pub mod interior_mutability;
+pub mod oop;
 
 /// Adds one to the number given.
 ///
