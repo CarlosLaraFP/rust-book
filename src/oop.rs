@@ -94,13 +94,15 @@ impl AveragedCollection {
 
 pub struct Post {
     state: Option<Box<dyn State>>,
-    content: String
+    content: String,
+    approvals: u32
 }
 impl Post {
     pub fn new() -> Post {
         Post {
             state: Some(Box::new(Draft {})),
-            content: String::new()
+            content: String::new(),
+            approvals: 0
         }
     }
 
@@ -134,15 +136,25 @@ impl Post {
     }
 
     pub fn approve(&mut self) {
+        self.approvals += 1;
+        if self.approvals >= 2 {
+            if let Some(s) = self.state.take() {
+                self.state = Some(s.approve())
+            }
+        }
+    }
+
+    pub fn reject(&mut self) {
         if let Some(s) = self.state.take() {
-            self.state = Some(s.approve())
+            self.state = Some(s.reject())
         }
     }
 }
-
+// TODO: Require two calls to approve before the state can be changed to Published.
 trait State {
     fn request_review(self: Box<Self>) -> Box<dyn State>;
     fn approve(self: Box<Self>) -> Box<dyn State>;
+    fn reject(self: Box<Self>) -> Box<dyn State>;
     // Default implementation keeps code ergonomic
     fn content<'a>(&self, post: &'a Post) -> &'a str {
         ""
@@ -159,6 +171,10 @@ impl State for Draft {
     fn approve(self: Box<Self>) -> Box<dyn State> {
         self
     }
+
+    fn reject(self: Box<Self>) -> Box<dyn State> {
+        self
+    }
 }
 
 struct PendingReview {}
@@ -171,6 +187,10 @@ impl State for PendingReview {
     fn approve(self: Box<Self>) -> Box<dyn State> {
         Box::new(Published {})
     }
+
+    fn reject(self: Box<Self>) -> Box<dyn State> {
+        Box::new(Draft {})
+    }
 }
 
 struct Published {}
@@ -182,6 +202,10 @@ impl State for Published {
 
     fn approve(self: Box<Self>) -> Box<dyn State> {
         self
+    }
+
+    fn reject(self: Box<Self>) -> Box<dyn State> {
+        Box::new(PendingReview {})
     }
 
     // Unlike OOP classes, structs and traits are independent, even though it's composition
