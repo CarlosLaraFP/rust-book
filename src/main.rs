@@ -973,7 +973,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     post.reject();
     assert_eq!("", post.content());
 
-
+    let mut draft_post = MyPost::new();
+    draft_post.add_text("Type System");
+    let pending_post = draft_post.request_review();
+    let published_post = pending_post.approve();
+    assert_eq!("Type System", published_post.content());
 
     Ok(())
 }
