@@ -136,11 +136,8 @@ impl Post {
     }
 
     pub fn approve(&mut self) {
-        self.approvals += 1;
-        if self.approvals >= 2 {
-            if let Some(s) = self.state.take() {
-                self.state = Some(s.approve())
-            }
+        if let Some(s) = self.state.take() {
+            self.state = Some(s.approve(&mut self.approvals))
         }
     }
 
@@ -150,10 +147,10 @@ impl Post {
         }
     }
 }
-// TODO: Require two calls to approve before the state can be changed to Published.
+
 trait State {
     fn request_review(self: Box<Self>) -> Box<dyn State>;
-    fn approve(self: Box<Self>) -> Box<dyn State>;
+    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State>;
     fn reject(self: Box<Self>) -> Box<dyn State>;
     // Default implementation keeps code ergonomic
     fn content<'a>(&self, post: &'a Post) -> &'a str {
@@ -168,7 +165,7 @@ impl State for Draft {
         Box::new(PendingReview {})
     }
 
-    fn approve(self: Box<Self>) -> Box<dyn State> {
+    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
         self
     }
 
@@ -184,8 +181,12 @@ impl State for PendingReview {
         self
     }
 
-    fn approve(self: Box<Self>) -> Box<dyn State> {
-        Box::new(Published {})
+    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
+        *approvals += 1;
+        if *approvals >= 2 {
+            return Box::new(Published {});
+        }
+        self
     }
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
@@ -200,7 +201,7 @@ impl State for Published {
         self
     }
 
-    fn approve(self: Box<Self>) -> Box<dyn State> {
+    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
         self
     }
 
