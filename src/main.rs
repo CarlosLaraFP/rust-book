@@ -954,6 +954,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
 
     screen.run();
 
+    let mut post = Post::new();
+
+    post.add_text("I ate a salad for lunch today");
+    assert_eq!("", post.content());
+
+    post.request_review();
+    assert_eq!("", post.content());
+
+    post.approve();
+    assert_eq!("I ate a salad for lunch today", post.content());
+
+
+
     Ok(())
 }
 
