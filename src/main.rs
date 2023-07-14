@@ -967,6 +967,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     post.approve();
     assert_eq!("I ate a salad for lunch today", post.content());
 
+    post.add_text("Trying to edit");
+    assert_eq!("I ate a salad for lunch today", post.content());
+
     post.reject();
     assert_eq!("", post.content());
 

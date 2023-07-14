@@ -94,20 +94,20 @@ impl AveragedCollection {
 
 pub struct Post {
     state: Option<Box<dyn State>>,
-    content: String,
-    approvals: u32
+    content: String
 }
 impl Post {
     pub fn new() -> Post {
         Post {
             state: Some(Box::new(Draft {})),
-            content: String::new(),
-            approvals: 0
+            content: String::new()
         }
     }
 
     pub fn add_text(&mut self, text: &str) {
-        self.content.push_str(text)
+        if self.state.as_ref().unwrap().is_editable() {
+            self.content.push_str(text)
+        }
     }
 
     pub fn content (&self) -> &str {
@@ -137,7 +137,7 @@ impl Post {
 
     pub fn approve(&mut self) {
         if let Some(s) = self.state.take() {
-            self.state = Some(s.approve(&mut self.approvals))
+            self.state = Some(s.approve())
         }
     }
 
@@ -149,23 +149,29 @@ impl Post {
 }
 
 trait State {
+    fn is_editable(&self) -> bool { false }
     fn request_review(self: Box<Self>) -> Box<dyn State>;
-    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State>;
+    fn approve(self: Box<Self>) -> Box<dyn State>;
     fn reject(self: Box<Self>) -> Box<dyn State>;
     // Default implementation keeps code ergonomic
-    fn content<'a>(&self, post: &'a Post) -> &'a str {
-        ""
-    }
+    fn content<'a>(&self, post: &'a Post) -> &'a str { "" }
 }
 
 struct Draft {}
-
 impl State for Draft {
-    fn request_review(self: Box<Self>) -> Box<dyn State> {
-        Box::new(PendingReview {})
+    fn is_editable(&self) -> bool {
+        true
     }
 
-    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
+    fn request_review(self: Box<Self>) -> Box<dyn State> {
+        Box::new(
+            PendingReview {
+                approvals: 0
+            }
+        )
+    }
+
+    fn approve(self: Box<Self>) -> Box<dyn State> {
         self
     }
 
@@ -174,16 +180,18 @@ impl State for Draft {
     }
 }
 
-struct PendingReview {}
-
+struct PendingReview {
+    approvals: u32
+}
 impl State for PendingReview {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
         self
     }
 
-    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
-        *approvals += 1;
-        if *approvals >= 2 {
+    // Interesting. The override chooses whether to implement mutably or immutably.
+    fn approve(mut self: Box<Self>) -> Box<dyn State> {
+        self.approvals += 1;
+        if self.approvals >= 2 {
             return Box::new(Published {});
         }
         self
@@ -195,18 +203,21 @@ impl State for PendingReview {
 }
 
 struct Published {}
-
 impl State for Published {
     fn request_review(self: Box<Self>) -> Box<dyn State> {
         self
     }
 
-    fn approve(self: Box<Self>, approvals: &mut u32) -> Box<dyn State> {
+    fn approve(self: Box<Self>) -> Box<dyn State> {
         self
     }
 
     fn reject(self: Box<Self>) -> Box<dyn State> {
-        Box::new(PendingReview {})
+        Box::new(
+            PendingReview {
+                approvals: 0
+            }
+        )
     }
 
     // Unlike OOP classes, structs and traits are independent, even though it's composition
