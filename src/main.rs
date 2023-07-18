@@ -979,6 +979,95 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     let published_post = pending_post.approve();
     assert_eq!("Type System", published_post.content());
 
+    let favorite_color: Option<&str> = None;
+    let is_tuesday = false;
+    let age: Result<u8, _> = "34".parse();
+
+    if let Some(color) = favorite_color {
+        println!("Using your favorite color, {color}, as the background");
+    } else if is_tuesday {
+        println!("Tuesday is green day!");
+    } else if let Ok(age) = age {
+        if age > 30 {
+            println!("Using purple as the background color");
+        } else {
+            println!("Using orange as the background color");
+        }
+    } else {
+        println!("Using blue as the background color");
+    }
+
+    let mut stack = Vec::new();
+
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+
+    while let Some(top) = stack.pop() {
+        println!("{}", top);
+    }
+
+    let v = vec!['a', 'b', 'c'];
+
+    for (index, value) in v.iter().enumerate() {
+        println!("{} is at index {}", value, index);
+    }
+
+    fn print_coordinates(&(x, y): &(i32, i32)) {
+        println!("Current location: ({}, {})", x, y);
+    }
+
+    let point = (3, 5);
+    print_coordinates(&point);
+
+    let x = 5;
+
+    match x {
+        1..=5 => println!("one through five"),
+        _ => println!("something else"),
+    }
+
+    let x = 'c';
+
+    match x {
+        'a'..='j' => println!("early ASCII letter"),
+        'k'..='z' => println!("late ASCII letter"),
+        _ => println!("something else"),
+    }
+
+    let Point { x, y } = Point { x: 0, y: 7 };
+    assert_eq!(0, x);
+    assert_eq!(7, y);
+
+    let p = Point { x: 0, y: 7 };
+
+    match p {
+        Point { x, y: 0 } => println!("On the x axis at {x}"),
+        Point { x: 0, y } => println!("On the y axis at {y}"),
+        Point { x, y } => println!("On neither axis: ({x}, {y})")
+    }
+
+    let msg = Message::ChangeColor(0, 160, 255);
+
+    match msg {
+        Message::Quit => {
+            println!("The Quit variant has no data to destructure.");
+        }
+        Message::Move { x, y } => {
+            println!("Move in the x direction {x} and in the y direction {y}");
+        }
+        Message::Write(text) => {
+            println!("Text message: {text}");
+        }
+        Message::ChangeColor(r, g, b) => {
+            println!("Change the color to red {r}, green {g}, and blue {b}",)
+        }
+    }
+
+    // Complex pattern destructuring
+    let ((feet, inches), Point { x, y }) = ((3, 10), Point { x: 3, y: -10 });
+
+
     Ok(())
 }
 
