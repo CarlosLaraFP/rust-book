@@ -1067,10 +1067,105 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     // Complex pattern destructuring
     let ((feet, inches), Point { x, y }) = ((3, 10), Point { x: 3, y: -10 });
 
+    let mut setting_value = Some(5);
+    let new_setting_value = Some(10);
+
+    match (setting_value, new_setting_value) {
+        (Some(_), Some(_)) => {
+            println!("Can't overwrite an existing customized value");
+        }
+        _ => {
+            setting_value = new_setting_value;
+        }
+    }
+
+    println!("setting is {:?}", setting_value);
+
+    let numbers = (2, 4, 8, 16, 32);
+
+    match numbers {
+        (first, _, third, _, fifth) => {
+            println!("Some numbers: {first}, {third}, {fifth}")
+        }
+    }
+
+    let s = Some(String::from("Hello!"));
+
+    // This code works because we never bind s to anything; it isn’t moved.
+    if let Some(_) = s {
+        println!("found a string");
+    }
+
+    println!("{:?}", s);
+
+    let origin = Point3D { x: 0, y: 0, z: 0 };
+
+    // we can use the .. syntax to use specific parts and ignore the rest, avoiding listing underscores for each ignored value
+    match origin {
+        Point3D { x, .. } => println!("x is {}", x),
+    }
+
+    let numbers = (2, 4, 8, 16, 32);
+
+    match numbers {
+        (first, .., last) => {
+            println!("Some numbers: {first}, {last}");
+        }
+    }
+
+    let num = Some(4);
+
+    match num {
+        Some(x) if x % 2 == 0 => println!("The number {} is even", x),
+        Some(x) => println!("The number {} is odd", x),
+        None => (),
+    }
+
+    let x = Some(5);
+    let y = 10;
+
+    match x {
+        Some(50) => println!("Got 50"),
+        Some(n) if n == y => println!("Matched, n = {n}"),
+        _ => println!("Default case, x = {:?}", x),
+    }
+
+    println!("at the end: x = {:?}, y = {y}", x);
+
+    let x = 4;
+    let y = false;
+
+    match x {
+        4 | 5 | 6 if y => println!("yes"),
+        _ => println!("no"),
+    }
+
+    let msg = NewMessage::Hello { id: 5 };
+
+    // Using @ lets us test a value and save it in a variable within one pattern.
+    match msg {
+        NewMessage::Hello {
+            id: id_variable @ 3..=7,
+        } => println!("Found an id in range: {}", id_variable),
+        Message::Hello { id: 10..=12 } => {
+            println!("Found an id in another range")
+        }
+        NewMessage::Hello { id } => println!("Found some other id: {}", id),
+    }
 
     Ok(())
 }
 
+
+enum NewMessage {
+    Hello { id: i32 },
+}
+
+struct Point3D {
+    x: i32,
+    y: i32,
+    z: i32,
+}
 
 struct SelectBox {
     width: u32,
