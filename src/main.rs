@@ -1147,11 +1147,48 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         NewMessage::Hello {
             id: id_variable @ 3..=7,
         } => println!("Found an id in range: {}", id_variable),
-        Message::Hello { id: 10..=12 } => {
+        NewMessage::Hello { id: 10..=12 } => {
             println!("Found an id in another range")
         }
         NewMessage::Hello { id } => println!("Found some other id: {}", id),
     }
+
+    let address = 0x012345usize;
+    let r = address as *const i32;
+
+    let mut num = 5;
+    // Create an immutable and a mutable raw pointer from references
+    //  We can create raw pointers in safe code; we just can’t dereference raw pointers outside an unsafe block
+    let r1 = &num as *const i32;
+    let r2 = &mut num as *mut i32;
+
+    unsafe {
+        println!("r1 is: {}", *r1);
+        println!("r2 is: {}", *r2);
+    }
+
+    // Why would you ever use raw pointers? One major use case is when interfacing with C code.
+
+    /*
+        Bodies of unsafe functions are effectively unsafe blocks, so to perform other
+        unsafe operations within an unsafe function, we don’t need to add another unsafe block.
+     */
+    unsafe fn dangerous() {}
+
+    unsafe {
+        dangerous();
+    }
+
+    // wrapping unsafe code in a safe function is a common abstraction
+
+    let mut v = vec![1, 2, 3, 4, 5, 6];
+
+    let r = &mut v[..];
+
+    let (a, b) = r.split_at_mut(3);
+
+    assert_eq!(a, &mut [1, 2, 3]);
+    assert_eq!(b, &mut [4, 5, 6]);
 
     Ok(())
 }
