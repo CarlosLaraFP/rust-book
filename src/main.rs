@@ -1203,13 +1203,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     assert_eq!(x, &mut [1, 1, 2]);
     assert_eq!(y, &mut [3, 5, 8]);
 
+    let address = 0x01234usize;
+    let r = address as *mut i32;
+
+    let values: &[i32] = unsafe { std::slice::from_raw_parts_mut(r, 10000) };
+
+    assert_eq!(values.len(), 10000);
+
+    //println!("Valid? {}", values.first().unwrap());
+
+    println!("{}", 99);
+
     Ok(())
 }
 
 
 fn split_at_mut(values: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
     /*
-        Returns an unsafe mutable pointer to the slice's buffer.
+        Returns an unsafe (raw) mutable pointer to the slice's buffer.
         The caller must ensure that the slice outlives the pointer this function returns,
         or else it will end up pointing to garbage.
      */
@@ -1218,6 +1229,8 @@ fn split_at_mut(values: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
     assert!(mid <= len);
 
     // Forms a mutable slice from a pointer and a length.
+    // Two mutable borrows of the same variable (Warning: Be 100% certain it's safe).
+    // This wouldn't be an issue if we were only working with immutable borrows.
     unsafe {
         (
             std::slice::from_raw_parts_mut(ptr, mid),
