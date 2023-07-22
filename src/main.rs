@@ -1190,7 +1190,40 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     assert_eq!(a, &mut [1, 2, 3]);
     assert_eq!(b, &mut [4, 5, 6]);
 
+    /*
+        Rust’s borrow checker can’t understand that we’re borrowing different parts of the slice;
+        it only knows that we’re borrowing from the same slice twice. Borrowing different parts of a
+        slice is fundamentally okay because the two slices aren’t overlapping, but Rust isn’t smart
+        enough to know this. When we know code is okay, but Rust doesn’t, it’s time to reach for unsafe code.
+     */
+    let mut s = vec![1, 1, 2, 3, 5, 8];
+
+    let (x, y) = split_at_mut(&mut s, 3);
+
+    assert_eq!(x, &mut [1, 1, 2]);
+    assert_eq!(y, &mut [3, 5, 8]);
+
     Ok(())
+}
+
+
+fn split_at_mut(values: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
+    /*
+        Returns an unsafe mutable pointer to the slice's buffer.
+        The caller must ensure that the slice outlives the pointer this function returns,
+        or else it will end up pointing to garbage.
+     */
+    let ptr = values.as_mut_ptr();
+    let len = values.len();
+    assert!(mid <= len);
+
+    // Forms a mutable slice from a pointer and a length.
+    unsafe {
+        (
+            std::slice::from_raw_parts_mut(ptr, mid),
+            std::slice::from_raw_parts_mut(ptr.add(mid), len - mid)
+        )
+    }
 }
 
 
