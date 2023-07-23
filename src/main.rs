@@ -1228,11 +1228,35 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         println!("COUNTER: {}", COUNTER);
     }
 
-
+    assert_eq!(
+        Point3D { x: 1, y: 0, z: 2 } + Point3D { x: 2, y: 3, z: -1 },
+        Point3D { x: 3, y: 3, z: 1 }
+    );
 
     Ok(())
 }
 
+
+#[derive(Debug, Copy, Clone, PartialEq)]
+struct Point3D {
+    x: i32,
+    y: i32,
+    z: i32
+}
+
+// Rust allows overloading the operations and corresponding traits listed in std::ops
+// by implementing the traits associated with the operator
+impl std::ops::Add for Point3D {
+    type Output = Point3D;
+
+    fn add(self, other: Point3D) -> Point3D {
+        Point3D {
+            x: self.x + other.x,
+            y: self.y + other.y,
+            z: self.z + other.z
+        }
+    }
+}
 
 // A trait is unsafe when at least one of its methods has some invariant that the compiler can’t verify.
 unsafe trait Foo {
@@ -1309,12 +1333,6 @@ fn split_at_mut(values: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
 
 enum NewMessage {
     Hello { id: i32 },
-}
-
-struct Point3D {
-    x: i32,
-    y: i32,
-    z: i32,
 }
 
 struct SelectBox {
