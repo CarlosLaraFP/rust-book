@@ -1233,9 +1233,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         Point3D { x: 3, y: 3, z: 1 }
     );
 
+    let meters = Meters(1);
+    let millimeters = Millimeters(500);
+    assert_eq!(millimeters + meters, Millimeters(1500));
+
     Ok(())
 }
 
+
+#[derive(PartialEq, Debug)]
+struct Millimeters(u32);
+struct Meters(u32);
+
+impl std::ops::Add<Meters> for Millimeters {
+    type Output = Millimeters;
+
+    fn add(self, other: Meters) -> Millimeters {
+        Millimeters(self.0 + (other.0 * 1000))
+    }
+}
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 struct Point3D {
