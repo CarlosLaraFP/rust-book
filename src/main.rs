@@ -1219,18 +1219,70 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         println!("Absolute value of -3 according to C: {}", abs(-3));
     }
 
+    println!("Immutable global (static) variable: {}", HELLO_WORLD);
+
+    // another safe abstraction over unsafe code
+    add_to_count(3);
+
+    unsafe {
+        println!("COUNTER: {}", COUNTER);
+    }
+
+
+
     Ok(())
 }
 
+
+// A trait is unsafe when at least one of its methods has some invariant that the compiler can’t verify.
+unsafe trait Foo {
+    // methods go here
+}
+// By using unsafe impl, we promise to uphold the invariants that the compiler can’t verify.
+unsafe impl Foo for i32 {
+    // method implementations go here
+}
+
+// Accessing and modifying mutable static variables is unsafe.
+static mut COUNTER: u32 = 2;
+
+fn add_to_count(inc: u32) {
+    unsafe {
+        COUNTER += inc;
+    }
+}
+
+// A static item is a value which is valid for the entire duration of the program ('static lifetime).
+// Values in a static variable have a fixed address in memory.
+// Constants, on the other hand, are allowed to duplicate their data whenever they’re used.
+static HELLO_WORLD: &str = "Hello, world!";
 
 /*
     Set up an integration with the abs function from the C standard library.
     Functions declared within extern blocks are always unsafe to call from Rust code.
     The reason is that other languages don’t enforce Rust’s rules and guarantees, and
     Rust can’t check them, so responsibility falls on the programmer to ensure safety.
+
+    Within the extern "C" block, we list the names and signatures of external functions
+    from another language we want to call. The "C" part defines which application binary
+    interface (ABI) the external function uses: the ABI defines how to call the function at the
+    assembly level. The "C" ABI is the most common and follows the C programming language’s ABI.
  */
 extern "C" {
     fn abs(input: i32) -> i32;
+}
+
+/*
+    Create an interface that allows other languages to call Rust functions.
+    Mangling is when a compiler changes the name we’ve given a function to a different name that
+    contains more information for other parts of the compilation process to consume but is less
+    human readable. Every programming language compiler mangles names slightly differently, so for a
+    Rust function to be nameable by other languages, we must disable the Rust compiler’s name mangling.
+    This function is accessible from C code after it’s compiled to a shared library and linked from C.
+ */
+#[no_mangle]
+pub extern "C" fn call_from_c() {
+    println!("Just called a Rust function from C!");
 }
 
 fn split_at_mut(values: &mut [i32], mid: usize) -> (&mut [i32], &mut [i32]) {
