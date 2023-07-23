@@ -1228,8 +1228,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
         println!("COUNTER: {}", COUNTER);
     }
 
+    let point_a = Point3D { x: 1, y: 0, z: 2 };
+    let point_b = Point3D { x: 2, y: 3, z: -1 };
+    let combined_point = point_a + point_b;
+    combined_point.outline_print();
+
     assert_eq!(
-        Point3D { x: 1, y: 0, z: 2 } + Point3D { x: 2, y: 3, z: -1 },
+        combined_point,
         Point3D { x: 3, y: 3, z: 1 }
     );
 
@@ -1237,9 +1242,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     let millimeters = Millimeters(500);
     assert_eq!(millimeters + meters, Millimeters(1500));
 
+    // To disambiguate and tell Rust that we want to use the implementation of Animal for Dog as opposed
+    // to the implementation of Animal for some other type, we need to use fully qualified syntax
+    // println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
+
     Ok(())
 }
 
+
+// Supertraits: Require One Trait’s Functionality Within Another Trait
+trait OutlinePrint: std::fmt::Display {
+    fn outline_print(&self) {
+        let output = self.to_string();
+        let len = output.len();
+        println!("{}", "*".repeat(len + 4));
+        println!("*{}*", " ".repeat(len + 2));
+        println!("* {} *", output);
+        println!("*{}*", " ".repeat(len + 2));
+        println!("{}", "*".repeat(len + 4));
+    }
+}
 
 #[derive(PartialEq, Debug)]
 struct Millimeters(u32);
@@ -1259,6 +1281,12 @@ struct Point3D {
     y: i32,
     z: i32
 }
+impl std::fmt::Display for Point3D {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "({}, {}, {})", self.x, self.y, self.z)
+    }
+}
+impl OutlinePrint for Point3D {}
 
 // Rust allows overloading the operations and corresponding traits listed in std::ops
 // by implementing the traits associated with the operator
