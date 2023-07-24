@@ -34,8 +34,8 @@ use rust_book::oop::*;
 use std::sync::{Arc, mpsc};
 use std::thread;
 use std::sync::Mutex;
-use rust_book::macros::HelloMacro;
-use rust_book_derive::HelloMacro;
+use hello_macro::HelloMacro;
+use hello_macro_derive::HelloMacro;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error

@@ -26,6 +26,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "hello_macro"
+version = "0.1.0"
+
+[[package]]
+name = "hello_macro_derive"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "libc"
 version = "0.2.145"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -90,16 +102,9 @@ name = "rust-book"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "hello_macro",
+ "hello_macro_derive",
  "rand",
- "rust_book_derive",
-]
-
-[[package]]
-name = "rust_book_derive"
-version = "0.1.0"
-dependencies = [
- "quote",
- "syn",
 ]
 
 [[package]]

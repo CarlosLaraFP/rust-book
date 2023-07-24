@@ -22,7 +22,10 @@ description = "The Rust programming language book by CarlosLaraFP"
 [dependencies]
 anyhow = "1.0" # Excellent crate for displaying useful and pretty errors to users
 rand = "0.8.5" # The rand crate is a library crate, which contains code that is intended to be used in other programs and can’t be executed on its own.
-rust_book_derive = { path = "rust_book_derive" }
+# If you’re publishing your versions of hello_macro and hello_macro_derive to crates.io, they would be regular dependencies;
+# if not, you can specify them as path dependencies:
+hello_macro = { path = "hello_macro" }
+hello_macro_derive = { path = "hello_macro_derive" }
 
 # cargo doc --open
 
