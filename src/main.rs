@@ -34,6 +34,8 @@ use rust_book::oop::*;
 use std::sync::{Arc, mpsc};
 use std::thread;
 use std::sync::Mutex;
+use rust_book::macros::HelloMacro;
+use rust_book_derive::HelloMacro;
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of error
@@ -1246,9 +1248,55 @@ fn main() -> Result<(), Box<dyn std::error::Error>> { // "catches" any kind of e
     // to the implementation of Animal for some other type, we need to use fully qualified syntax
     // println!("A baby dog is called a {}", <Dog as Animal>::baby_name());
 
+    let w = Wrapper(vec![String::from("hello"), String::from("world")]);
+    println!("w = {}", w);
+
+    type Kilometers = i32;
+
+    let x: i32 = 5;
+    let y: Kilometers = 5;
+
+    println!("x + y = {}", x + y);
+
+    let list_of_numbers = vec![1, 2, 3];
+
+    let string_list_a: Vec<String> = list_of_numbers
+        .iter()
+        .map(|i| i.to_string())
+        .collect();
+
+    let string_list_b: Vec<String> = list_of_numbers
+        .iter()
+        .map(ToString::to_string)
+        .collect();
+
+    assert_eq!(string_list_a, string_list_b);
+
+    let list_of_statuses: Vec<Status> = (0u32..20).map(Status::Value).collect();
+
+    Pancakes::hello_macro();
+
     Ok(())
 }
 
+
+#[derive(HelloMacro)]
+struct Pancakes;
+
+enum Status {
+    Value(u32),
+    Stop,
+}
+
+// newtype pattern
+struct Wrapper(Vec<String>);
+// If we wanted the new type to have every method the inner type has,
+// we could implement the Deref trait on the Wrapper to return the inner type
+impl std::fmt::Display for Wrapper {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "[{}]", self.0.join(", "))
+    }
+}
 
 // Supertraits: Require One Trait’s Functionality Within Another Trait
 trait OutlinePrint: std::fmt::Display {

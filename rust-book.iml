@@ -7,8 +7,10 @@
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/add/add_one/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/add/adder/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust_book_derive/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/add/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust_book_derive/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

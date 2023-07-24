@@ -55,6 +55,7 @@ pub mod shoes;
 pub mod smart_pointers;
 pub mod interior_mutability;
 pub mod oop;
+pub mod macros;
 
 /// Adds one to the number given.
 ///
